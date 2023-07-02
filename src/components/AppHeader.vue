@@ -34,6 +34,8 @@
     
 </template>
 
-<style lang="scss">
-@use '../style/main.scss';
+<style lang="scss" scoped>
+    #collapsibleNavId .router-link-active{
+        background-color: rgb(55, 55, 219);
+    }
 </style>

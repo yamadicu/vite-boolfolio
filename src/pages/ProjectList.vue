@@ -9,22 +9,32 @@
         baseUrl:'http://127.0.0.1:8000',
         currentPage:1,
         lastPage:null,
+        categories:null,
+        selectedCategory:"all"
       }
     },
     mounted(){
       this.getProject(1);
+      this.getCategories();
     },
     methods:{
       getProject(projectApiPage){
-        axios.get(`${this.baseUrl}/api/projects`,{
-          params:{
-            page: projectApiPage 
-          }
-        }).then(res=>{
+        const params={
+          page: projectApiPage,
+        }
+        if(this.selectedCategory !== 'all' ){
+          params.category_id = this.selectedCategory
+        }
+        axios.get(`${this.baseUrl}/api/projects`,{params}).then(res=>{
           this.project = res.data.project.data
           this.currentPage = res.data.project.current_page
           this.lastPage = res.data.project.last_page
         })
+      },
+      getCategories(){
+        axios.get(`${this.baseUrl}/api/categories`).then(res=>{
+          this.categories = res.data.categories
+        }) 
       }
     }
   }
@@ -33,13 +43,24 @@
 <template>
 
   <div class="container">
-  <h1>ecco i progetti</h1>
+    <h1>ecco i progetti</h1>
+
+    <div class="mb-3">
+      <label for="" class="form-label">filtra per categoria</label>
+      <select @change="getProject()" v-model="selectedCategory" class="form-select form-select-lg" name="" id="">
+        <option value="all">nessun filtro</option>
+        <option :value="elem.id" v-for="(elem, index) in categories" :key="index">{{ elem.name }}</option>
+      </select>
+    </div>
+
     <div class="row">
       <div class="col-3 m-2" v-for="(elem,index) in project" :key="index">
         <div class="card">
           <img class="card-img-top" :src="`${baseUrl}/storage/${elem.cover_image}`" alt="Title">
           <div class="card-body">
-            <h4 class="card-title">{{elem.title}}</h4>
+            <router-link :to="{name: 'SingleProject', params:{slug: elem.slug}}">
+              <h4 class="card-title">{{elem.title}}</h4>
+            </router-link>
             <p class="card-text">{{elem.content}}</p>
             <span v-if="elem.category">{{ elem.category.name }}</span>
             <div>
