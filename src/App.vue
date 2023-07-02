@@ -33,6 +33,12 @@
           <div class="card-body">
             <h4 class="card-title">{{elem.title}}</h4>
             <p class="card-text">{{elem.content}}</p>
+            <span v-if="elem.category">{{ elem.category.name }}</span>
+            <div>
+              <ul>
+                <li class="" v-for="(elem,index) in elem.technologies" :key="index">{{ elem.name }}</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
